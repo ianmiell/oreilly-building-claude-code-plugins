@@ -1,0 +1,9 @@
+{
+  "name": "adr",
+  "version": "0.1.0",
+  "description": "Write and manage Architecture Decision Records",
+  "author": {
+    "name": "Ian Miell"
+  },
+  "repository": "https://github.com/ianmiell/oreilly-building-claude-code-plugins"
+}

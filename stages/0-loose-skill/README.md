@@ -51,7 +51,9 @@ The skill works, for you, on your machine. Now try to give it to your team:
 - **Tools don't recognise it.** `claude plugin validate stages/0-loose-skill` fails with
   "No manifest found".
 
-Segment 1 turns this into a plugin, which fixes all four.
+Segment 1 turns this into a plugin ([stage 1](../1-plugin/)), which gives it a version, room for
+other components and a manifest the tools recognise. Installing and updating it across a team
+comes in segment 3.
 
 One more thing to notice: the skill asks the model to work out the next ADR number itself. That
 works most of the time, which is not the same as every time. Segment 2 deals with that.

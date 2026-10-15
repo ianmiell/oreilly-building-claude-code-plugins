@@ -1,0 +1,6 @@
+{
+  "claudeMdExcludes": [
+    "**/oreilly-building-claude-code-plugins/CLAUDE.md",
+    "**/oreilly-building-claude-code-plugins/AGENTS.md"
+  ]
+}

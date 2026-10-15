@@ -26,6 +26,7 @@ plugin shipped to a whole team.
 ```
 sample-project/     # a pretend service with a couple of ADRs; run Claude Code here
 stages/             # the adr plugin at each stage of the course
+exercises/          # the hands-on exercises; each one's solution is a stage
 ```
 
 ## Stages
@@ -33,9 +34,15 @@ stages/             # the adr plugin at each stage of the course
 | Stage | What it is | Status |
 |---|---|---|
 | [0: a loose skill](stages/0-loose-skill/) | The `new-adr` skill on its own | Ready |
-| 1: a plugin | The skill packaged as a plugin and loaded locally | Coming |
+| [1: a plugin](stages/1-plugin/) | The skill packaged as a plugin and loaded locally | Ready |
 | 2: reliable | Scripts, configuration and skills that call skills | Coming |
 | 3: shipped | A team marketplace, versioning and managed settings | Coming |
 | 4: proven | Validation and an eval suite | Coming |
 
 Start with [stage 0](stages/0-loose-skill/).
+
+## Exercises
+
+| Exercise | Segment | Solution |
+|---|---|---|
+| [1: turn a loose skill into a plugin](exercises/01-skill-to-plugin.md) | 1 | [stage 1](stages/1-plugin/adr/) |

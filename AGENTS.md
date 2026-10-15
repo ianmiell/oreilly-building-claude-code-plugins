@@ -1,0 +1,85 @@
+# AGENTS.md
+
+Guidance for AI coding agents maintaining this repository. `CLAUDE.md` imports this file.
+
+If you're helping someone work through the course in `sample-project/` or `work/`, these
+instructions aren't for you: ignore this file and help them with their task.
+
+## What this repo is
+
+Public, learner-facing materials for the O'Reilly live training **Building Claude Code Plugins**.
+Learners clone it, follow the stage READMEs and do the exercises. Everything here should be
+finished, tested and safe to run on a learner's machine.
+
+The course builds one plugin, `adr`, which writes and maintains Architecture Decision Records.
+It grows through numbered stages:
+
+```
+stages/0-loose-skill/   # the starting point: a loose skill, not a plugin
+stages/1-plugin/adr/    # the plugin root for stage 1; later stages follow the same pattern
+exercises/              # one file per exercise, each pointing at a stage as its solution
+sample-project/         # a pretend service learners run Claude Code in
+work/                   # learners' scratch folder (git-ignored)
+```
+
+## Rules for changes
+
+### Stages are snapshots
+
+- Each stage is a complete, standalone copy of the plugin at that point in the course. Don't
+  make one stage depend on files in another.
+- Change only what the stage is meant to teach. If stage N+1 changes a file, the diff between
+  stages should show just that lesson.
+- A fix to an earlier stage usually needs carrying forward into every later stage.
+- Keep the README table of stages, and each stage's README, in step with what's on disk.
+
+### Exercises
+
+Each exercise has a starting state reachable in one command, numbered steps, an expected result,
+and a solution kept separate from the starting state (normally a stage folder). Exercises should
+take about 10 minutes and need only Claude Code, git and a terminal.
+
+### Technical accuracy
+
+Learners copy what they see, and Claude Code's plugin system changes quickly.
+
+- Check plugin facts (manifest fields, layout, CLI commands and flags, hook events, marketplace
+  and settings formats) against https://code.claude.com/docs or by running the command. Don't
+  rely on memory, and never invent flags, keys or file names.
+- Expected output quoted in a README or exercise must be real output from running it.
+- Record the Claude Code version a stage or exercise was tested with.
+
+### Testing a change
+
+```sh
+claude plugin validate --strict stages/<stage>/adr
+```
+
+Then run the stage's "Try it" steps end to end. To test headless without touching your own
+`~/.claude`, copy `sample-project` to a temporary folder outside the repo and run there:
+
+```sh
+claude -p "/adr:new-adr We've agreed to use Redis for session caching ..." \
+  --plugin-dir <path-to>/stages/<stage>/adr \
+  --permission-mode acceptEdits --allowedTools "Read Write Glob Grep Bash(ls:*)" < /dev/null
+```
+
+Keep the prompt straight after `-p`: `--allowedTools` takes several values and swallows a prompt
+that follows it. Check that `docs/adr/0003-*.md` appears with the expected content.
+
+## Style
+
+- British English spelling ("behaviour", "organisation").
+- Plain, direct prose in short sentences. Explain why, not just how.
+- Markdown, with fenced code blocks that carry a language tag.
+
+## Safety
+
+- No secrets, tokens, email addresses, internal URLs or customer names. Plugin manifests list the
+  author by name only.
+- Scripts, hooks and MCP servers must be safe on a learner's machine: nothing destructive, and no
+  network calls to services learners haven't been told about.
+- Risky patterns shown for the security review must be clearly labelled as examples of what not
+  to admit, and must not run by default.
+- Don't put instructor-only material here: speaker notes, timings or answers to questions
+  the instructor will ask live.
