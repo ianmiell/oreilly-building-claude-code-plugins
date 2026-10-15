@@ -1,0 +1,13 @@
+{
+  "extraKnownMarketplaces": {
+    "building-plugins-course": {
+      "source": {
+        "source": "github",
+        "repo": "ianmiell/oreilly-building-claude-code-plugins"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "adr@building-plugins-course": true
+  }
+}

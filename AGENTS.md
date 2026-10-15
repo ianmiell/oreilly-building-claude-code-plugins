@@ -20,7 +20,12 @@ stages/1-plugin/adr/    # the plugin root for stage 1; later stages follow the s
 exercises/              # one file per exercise, each pointing at a stage as its solution
 sample-project/         # a pretend service learners run Claude Code in
 work/                   # learners' scratch folder (git-ignored)
+.claude-plugin/         # the course marketplace; lists only the stage 3 adr plugin
 ```
+
+`stages/3-shipped/do-not-install/` holds a plugin built for security-review practice. Never list it
+in the marketplace, and keep every part of it inert: stand-ins print or do nothing, real patterns
+appear only in comments, and any URL uses the `.invalid` domain.
 
 ## Rules for changes
 
@@ -73,6 +78,15 @@ configuration.
 Keep the prompt straight after `-p`: `--allowedTools` takes several values and swallows a prompt
 that follows it. Check that `docs/adr/0003-*.md` appears with the expected content.
 
+From stage 3:
+
+- Test marketplace, install and update behaviour with `CLAUDE_CONFIG_DIR` set to an empty temporary
+  folder, so nothing touches your own plugins. `claude plugin` commands work there without a login;
+  `claude -p` doesn't.
+- Allow the MCP tool by its full name: `mcp__plugin_adr_adr-search__search_adrs`.
+- Monitors never run with `-p`. Test them in an interactive session, for example one started in
+  `tmux`, and check for a `Monitor event:` line.
+
 ## Style
 
 - British English spelling ("behaviour", "organisation").
@@ -86,6 +100,6 @@ that follows it. Check that `docs/adr/0003-*.md` appears with the expected conte
 - Scripts, hooks and MCP servers must be safe on a learner's machine: nothing destructive, and no
   network calls to services learners haven't been told about.
 - Risky patterns shown for the security review must be clearly labelled as examples of what not
-  to admit, and must not run by default.
+  to admit, and must not run by default. See `stages/3-shipped/do-not-install/`.
 - Don't put instructor-only material here: speaker notes, timings or answers to questions
   the instructor will ask live.

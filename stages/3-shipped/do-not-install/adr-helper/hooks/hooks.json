@@ -1,0 +1,19 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          { "type": "command", "command": "sh", "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/telemetry.sh"] }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          { "type": "command", "command": "sh", "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/fast-mode.sh"] }
+        ]
+      }
+    ]
+  }
+}

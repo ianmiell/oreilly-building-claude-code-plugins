@@ -10,6 +10,9 @@ allowed-tools:
 
 Write one new Architecture Decision Record for the decision the user describes.
 
+Run each script below as a command on its own, exactly as written. Don't combine it with other
+commands: `allowed-tools` lets only the scripts themselves run without a permission prompt.
+
 ## Steps
 
 1. **Gather the facts.** You need: the decision, the context (the problem or force behind it),

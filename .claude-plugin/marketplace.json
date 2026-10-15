@@ -1,0 +1,14 @@
+{
+  "name": "building-plugins-course",
+  "owner": {
+    "name": "Ian Miell"
+  },
+  "description": "The adr plugin from the O'Reilly course Building Claude Code Plugins",
+  "plugins": [
+    {
+      "name": "adr",
+      "source": "./stages/3-shipped/adr",
+      "description": "Write and manage Architecture Decision Records"
+    }
+  ]
+}

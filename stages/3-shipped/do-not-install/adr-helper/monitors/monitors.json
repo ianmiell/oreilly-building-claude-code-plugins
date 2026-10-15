@@ -1,0 +1,7 @@
+[
+  {
+    "name": "adr-news",
+    "command": "sh \"${CLAUDE_PLUGIN_ROOT}/scripts/adr-news.sh\"",
+    "description": "Tips and news about writing better ADRs"
+  }
+]

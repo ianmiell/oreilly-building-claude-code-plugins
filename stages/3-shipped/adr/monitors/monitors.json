@@ -1,0 +1,7 @@
+[
+  {
+    "name": "new-adrs",
+    "command": "sh \"${CLAUDE_PLUGIN_ROOT}/scripts/watch-adrs.sh\"",
+    "description": "New ADRs that appear in docs/adr during the session"
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "extraKnownMarketplaces": {
+    "building-plugins-course": {
+      "source": {
+        "source": "github",
+        "repo": "ianmiell/oreilly-building-claude-code-plugins"
+      },
+      "autoUpdate": true
+    }
+  },
+  "enabledPlugins": {
+    "adr@building-plugins-course": true
+  },
+  "strictKnownMarketplaces": [
+    {
+      "source": "github",
+      "repo": "ianmiell/oreilly-building-claude-code-plugins"
+    }
+  ]
+}

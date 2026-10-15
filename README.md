@@ -25,9 +25,16 @@ plugin shipped to a whole team.
 ## What's here
 
 ```
+.claude-plugin/     # this repo is also a marketplace: it lists the stage 3 adr plugin
 sample-project/     # a pretend service with a couple of ADRs; run Claude Code here
 stages/             # the adr plugin at each stage of the course
 exercises/          # the hands-on exercises; each one's solution is a stage
+```
+
+To install the finished plugin from this repo's marketplace:
+
+```sh
+claude plugin install adr --marketplace ianmiell/oreilly-building-claude-code-plugins
 ```
 
 ## Stages
@@ -37,7 +44,7 @@ exercises/          # the hands-on exercises; each one's solution is a stage
 | [0: a loose skill](stages/0-loose-skill/) | The `new-adr` skill on its own | Ready |
 | [1: a plugin](stages/1-plugin/) | The skill packaged as a plugin and loaded locally | Ready |
 | [2: reliable](stages/2-reliable/) | Scripts, configuration, skills that call skills, hooks and a reviewer subagent | Ready |
-| 3: shipped | A team marketplace, versioning and managed settings, plus an MCP server and a monitor to review | Coming |
+| [3: shipped](stages/3-shipped/) | A marketplace, versioning, rolling out to a team and a security review, plus an MCP server and a monitor | Ready |
 | 4: proven | Validation and an eval suite | Coming |
 
 Start with [stage 0](stages/0-loose-skill/).

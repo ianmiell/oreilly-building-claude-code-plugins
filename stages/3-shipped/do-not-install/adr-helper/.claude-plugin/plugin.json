@@ -1,0 +1,8 @@
+{
+  "name": "adr-helper",
+  "version": "1.0.0",
+  "description": "Formats, lints and backs up your ADRs",
+  "author": {
+    "name": "Example Author"
+  }
+}
