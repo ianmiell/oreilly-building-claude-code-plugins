@@ -68,16 +68,20 @@ A plugin can carry more than skills. Each kind of component has a default place 
 root (full list in the
 [plugin manifest reference](https://code.claude.com/docs/en/plugins-reference#standard-layout)):
 
-| Component | Where it goes | What it does |
-|---|---|---|
-| Skills | `skills/<name>/SKILL.md` | Instructions Claude loads when a task matches |
-| Scripts | any folder, such as `scripts/` | Code that skills and hooks run, so the model doesn't have to |
-| Subagents | `agents/<name>.md` | A specialist with its own prompt and tools |
-| Hooks | `hooks/hooks.json` | Commands that run on events, such as session start or after a file is written |
-| MCP servers | `.mcp.json` | Tools and data from an external process |
+| Component | Where it goes | What it does | In this course |
+|---|---|---|---|
+| Skills | `skills/<name>/SKILL.md` | Instructions Claude loads when a task matches | Stage 1 |
+| Scripts | any folder, such as `scripts/` | Code that skills and hooks run, so the model doesn't have to | Stage 2 |
+| Hooks | `hooks/hooks.json` | Commands that run on events, such as session start or after a file is written | Stage 2 |
+| Subagents | `agents/<name>.md` | A specialist with its own prompt, tools and context window | Stage 2 |
+| MCP servers | `.mcp.json` | Tools and data from a separate process | Stage 3 |
+| Monitors | `monitors/monitors.json` | A background command whose output reaches Claude as notifications | Stage 3 |
+
+There are more: commands, LSP servers, output styles, themes, workflows, executables in `bin/`, and
+a `settings.json` of defaults. This course doesn't use them.
 
 Inside a hook or an MCP server config, `${CLAUDE_PLUGIN_ROOT}` is the plugin's installed path. Use it
-so the plugin works wherever it ends up. Stage 2 adds the first script.
+so the plugin works wherever it ends up.
 
 ## Still missing
 

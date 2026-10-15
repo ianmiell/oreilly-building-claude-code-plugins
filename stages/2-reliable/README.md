@@ -1,6 +1,6 @@
 # Stage 2: reliable
 
-The `adr` plugin from [stage 1](../1-plugin/), made dependable. Three changes:
+The `adr` plugin from [stage 1](../1-plugin/), made dependable. Five changes:
 
 - **Scripts do the mechanical work.** The next ADR number and the choice of template come from
   shell scripts, not from the model.
@@ -8,10 +8,17 @@ The `adr` plugin from [stage 1](../1-plugin/), made dependable. Three changes:
   and you can keep your own template somewhere that survives plugin updates.
 - **A skill that calls another skill.** The new `supersede-adr` skill hands the writing of the new
   ADR to `new-adr` rather than doing it itself.
+- **Hooks.** At the start of every session Claude is told which decisions are already accepted, and
+  every ADR Claude writes is checked, whether or not a skill wrote it.
+- **A reviewer subagent.** `adr-reviewer` reviews an ADR in its own context, with read-only tools.
 
 ```
 adr/
   .claude-plugin/plugin.json      # version 0.2.0, now with userConfig
+  hooks/hooks.json                # new: SessionStart and PostToolUse hooks
+  scripts/session-context.sh      # new: lists accepted decisions for Claude
+  scripts/check-adr.sh            # new: checks each ADR Claude writes
+  agents/adr-reviewer.md          # new: read-only reviewer subagent
   skills/
     new-adr/
       SKILL.md                    # runs the scripts instead of working things out
@@ -101,6 +108,56 @@ templates, and it's still there after the next update.
 template stay in one place. Afterwards it changes the old ADR's status to `Superseded by ADR 0003`
 and links the new one back.
 
+## Hooks
+
+A skill only runs when Claude decides to use it, and then Claude follows it as best it can. A hook
+always runs: Claude Code runs it on an event, whatever Claude is doing. `hooks/hooks.json` declares
+two:
+
+```json
+{
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [{ "type": "command", "command": "sh",
+                    "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/session-context.sh"] }] }
+    ],
+    "PostToolUse": [
+      { "matcher": "Write|Edit",
+        "hooks": [{ "type": "command", "command": "sh",
+                    "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/check-adr.sh"] }] }
+    ]
+  }
+}
+```
+
+- **SessionStart** runs when a session starts. Whatever `session-context.sh` prints is added to
+  Claude's context, so Claude starts every session knowing the accepted decisions, without being
+  asked and without reading a file.
+- **PostToolUse** runs after every `Write` or `Edit`. `check-adr.sh` reads the tool call as JSON on
+  stdin, ignores anything that isn't an ADR, and checks the rest for a duplicate number, a status
+  and a date. If something is wrong it exits with code 2, and Claude is shown its message. The file
+  has already been written by then, so the hook can't stop it; a `PreToolUse` hook could.
+
+The plugin's hooks are active as soon as the plugin is loaded, not only when one of its skills
+runs. Both scripts read the `adr_dir` option from the `CLAUDE_PLUGIN_OPTION_ADR_DIR` environment
+variable, which Claude Code sets for hooks.
+
+`args` runs the command directly, without a shell, so `${CLAUDE_PLUGIN_ROOT}` needs no quoting even
+if the path has spaces in it.
+
+## A reviewer subagent
+
+`agents/adr-reviewer.md` defines a subagent: a separate assistant with its own instructions and its
+own context window. Claude hands it an ADR, it reads it and the other ADRs, and it reports back a
+verdict and up to five findings. Its front matter limits it to read-only tools:
+
+```yaml
+tools: Read, Glob, Grep
+```
+
+So it can't change the ADR it's reviewing, and its reading doesn't fill up your main conversation.
+In the plugin it's called `adr:adr-reviewer`.
+
 ## Try it
 
 From the sample project, with the plugin loaded:
@@ -131,7 +188,31 @@ claude --plugin-dir ../stages/2-reliable/adr
    status, and in `0002-use-postgresql-for-order-data.md` only the status has changed, to
    `Superseded by [ADR 0003](...)`.
 
-3. **Change the configuration.** Reset again, then start Claude Code with the example settings and
+3. **See what the hooks do.** Reset, start Claude Code with the plugin, and ask:
+
+   ```
+   What database do we use for order data, and which ADR says so? Don't read any files.
+   ```
+
+   Expected: PostgreSQL, ADR 0002. Claude knows from the SessionStart hook. Then:
+
+   ```
+   Create the file docs/adr/0002-use-mysql-for-reporting.md containing only the line '# Use MySQL for reporting'. Do not use any skills.
+   ```
+
+   Expected: Claude writes the file as asked, the PostToolUse hook rejects it, and Claude tells you
+   why: the number 0002 is taken, and there's no status or date. It usually offers to fix the file.
+   No skill was involved: the hook checks every ADR, however it was written.
+
+4. **Ask for a review:**
+
+   ```
+   Use the adr-reviewer agent to review ADR 0002.
+   ```
+
+   Expected: Claude hands the review to `adr:adr-reviewer` and reports its verdict and findings.
+
+5. **Change the configuration.** Reset again, then start Claude Code with the example settings and
    repeat step 1:
 
    ```sh

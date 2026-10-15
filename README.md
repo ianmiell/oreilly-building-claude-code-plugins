@@ -20,6 +20,7 @@ plugin shipped to a whole team.
 - [Claude Code](https://code.claude.com/docs), signed in. Tested with Claude Code 2.1.300.
 - git
 - A terminal
+- Python 3, from stage 3 on (for the MCP server; standard library only, nothing to install)
 
 ## What's here
 
@@ -35,8 +36,8 @@ exercises/          # the hands-on exercises; each one's solution is a stage
 |---|---|---|
 | [0: a loose skill](stages/0-loose-skill/) | The `new-adr` skill on its own | Ready |
 | [1: a plugin](stages/1-plugin/) | The skill packaged as a plugin and loaded locally | Ready |
-| [2: reliable](stages/2-reliable/) | Scripts, configuration and skills that call skills | Ready |
-| 3: shipped | A team marketplace, versioning and managed settings | Coming |
+| [2: reliable](stages/2-reliable/) | Scripts, configuration, skills that call skills, hooks and a reviewer subagent | Ready |
+| 3: shipped | A team marketplace, versioning and managed settings, plus an MCP server and a monitor to review | Coming |
 | 4: proven | Validation and an eval suite | Coming |
 
 Start with [stage 0](stages/0-loose-skill/).

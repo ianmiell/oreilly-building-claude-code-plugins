@@ -61,10 +61,11 @@ or settings, copy `sample-project` to a temporary folder outside the repo and ru
 ```sh
 claude -p "/adr:new-adr We've agreed to use Redis for session caching ..." \
   --plugin-dir <path-to>/stages/<stage>/adr \
-  --permission-mode acceptEdits --allowedTools "Read Write Edit Glob Grep Skill" < /dev/null
+  --permission-mode acceptEdits --allowedTools "Read Write Edit Glob Grep Skill Agent" < /dev/null
 ```
 
-From stage 2, `Skill` lets one skill call another and `Edit` lets `supersede-adr` change a status.
+From stage 2, `Skill` lets one skill call another, `Edit` lets `supersede-adr` change a status, and
+`Agent` lets Claude use the reviewer subagent. Plugin hooks run in headless sessions too.
 The skills' own scripts run through their `allowed-tools`, so don't add `Bash` here: that would hide
 a broken `allowed-tools` rule. Pass `--settings stages/2-reliable/settings-example.json` to test
 configuration.
