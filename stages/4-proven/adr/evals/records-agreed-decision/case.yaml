@@ -1,0 +1,43 @@
+schema_version: "1.1"
+name: records-agreed-decision
+description: An agreed decision becomes ADR 0003, in the template, with nothing invented.
+tags: [fires]
+context:
+  scaffold_script: scaffold.sh
+execution:
+  prompt: >-
+    We've agreed to use Redis for session caching instead of sticky sessions on the load
+    balancer, because sticky sessions drop users' baskets whenever we deploy. Please write that down.
+  max_turns: 15
+  allowed_tools: [Skill, Read, Write, Edit, Glob, Grep, Bash]
+graders:
+  - type: file_exists
+    name: numbered-0003
+    path: docs/adr/0003-*.md
+  - type: regex
+    name: kebab-case-file-name
+    weight: 0.5
+    target: files
+    pattern: "docs/adr/0003-[a-z0-9]+(-[a-z0-9]+)*\\.md"
+  - type: llm
+    name: follows-template
+    focus: trace
+    criteria: |
+      Look only at the new file Claude wrote under docs/adr/ whose name starts with 0003.
+      PASS if all of these are true of that file: its title starts "# 3." or "# 0003.";
+      it has a "## Status" heading with "Accepted" under it; and it has the headings
+      "## Context", "## Decision", "## Alternatives considered" and "## Consequences".
+      FAIL if any of them is missing, or no such file was written.
+  - type: llm
+    name: nothing-invented
+    focus: trace
+    criteria: |
+      Look only at the new file Claude wrote under docs/adr/ whose name starts with 0003.
+      PASS if it records the decision to use Redis for session caching, and sticky sessions are
+      the only alternative it says was considered.
+      FAIL if it presents any other alternative (for example Memcached or database-backed
+      sessions) as having been considered, or no such file was written.
+  - type: tool_used
+    name: plugin-fired
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(adr:)?new-adr"'

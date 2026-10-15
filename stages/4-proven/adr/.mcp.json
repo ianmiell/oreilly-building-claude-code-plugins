@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "adr-search": {
+      "command": "python3",
+      "args": ["-I", "${CLAUDE_PLUGIN_ROOT}/scripts/adr_search.py"],
+      "env": {
+        "ADR_DIR": "${user_config.adr_dir}",
+        "ADR_PROJECT_DIR": "${CLAUDE_PROJECT_DIR}"
+      }
+    }
+  }
+}

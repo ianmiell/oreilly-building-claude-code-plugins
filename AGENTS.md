@@ -87,6 +87,21 @@ From stage 3:
 - Monitors never run with `-p`. Test them in an interactive session, for example one started in
   `tmux`, and check for a `Monitor event:` line.
 
+From stage 4, run the eval suite from the plugin folder. It costs real money (about $3 for the full
+suite), so pilot a changed case on its own first:
+
+```sh
+cd stages/4-proven/adr
+claude plugin eval . --case '<case-name>' --runs 1 --scaffold --allow-tools Bash Write Edit --no-publish --trust-plugin
+```
+
+- Each case's `scaffold.sh` must sit inside its case folder; `..` paths are refused.
+- A `{source: file, path}` grader target needs an exact path. For a file whose name the model
+  chooses, grade the `trace` or use `file_exists` with a glob.
+- If you change a case, update the recorded results table in the stage README from a full run.
+- Results go to `evals/results/`, which git ignores. `--keep-temp` leaves read-only sandboxes in the
+  system temp folder; `chmod -R u+rwx` them before deleting.
+
 ## Style
 
 - British English spelling ("behaviour", "organisation").

@@ -1,0 +1,30 @@
+schema_version: "1.1"
+name: supersedes-old-decision
+description: A reversed decision gets a new ADR, and the old one is marked superseded and linked.
+tags: [fires]
+context:
+  scaffold_script: scaffold.sh
+execution:
+  prompt: >-
+    We're replacing PostgreSQL for order data with DynamoDB. Order volume has outgrown our single
+    Postgres instance and the team doesn't want to run sharding. We looked at Aurora too, but it
+    costs more at our volume. Update the ADRs.
+  max_turns: 25
+  allowed_tools: [Skill, Read, Write, Edit, Glob, Grep, Bash]
+graders:
+  - type: file_exists
+    name: new-adr-0003
+    path: docs/adr/0003-*.md
+  - type: regex
+    name: old-adr-marked-superseded
+    target: {source: file, path: docs/adr/0002-use-postgresql-for-order-data.md}
+    pattern: "Superseded by \\[ADR 0003\\]\\(0003-[a-z0-9-]+\\.md\\)"
+  - type: regex
+    name: new-adr-links-back
+    target: trace
+    pattern: "Supersedes \\[ADR 0002\\]\\(0002-use-postgresql-for-order-data\\.md\\)"
+  - type: tool_order
+    name: new-adr-does-the-writing
+    arm: with-only
+    before: {tool: Skill, input_match: 'supersede-adr'}
+    after: {tool: Skill, input_match: 'new-adr'}
