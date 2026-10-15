@@ -1,0 +1,24 @@
+{
+  "name": "adr",
+  "version": "0.2.0",
+  "description": "Write and manage Architecture Decision Records",
+  "author": {
+    "name": "Ian Miell"
+  },
+  "repository": "https://github.com/ianmiell/oreilly-building-claude-code-plugins",
+  "userConfig": {
+    "adr_dir": {
+      "type": "string",
+      "title": "ADR directory",
+      "description": "Where ADRs live, relative to the project root",
+      "default": "docs/adr"
+    },
+    "template": {
+      "type": "string",
+      "title": "ADR template",
+      "description": "Nygard's original format, or MADR",
+      "options": ["nygard", "madr"],
+      "default": "nygard"
+    }
+  }
+}

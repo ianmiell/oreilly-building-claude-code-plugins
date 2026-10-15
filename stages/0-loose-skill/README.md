@@ -55,5 +55,6 @@ Segment 1 turns this into a plugin ([stage 1](../1-plugin/)), which gives it a v
 other components and a manifest the tools recognise. Installing and updating it across a team
 comes in segment 3.
 
-One more thing to notice: the skill asks the model to work out the next ADR number itself. That
-works most of the time, which is not the same as every time. Segment 2 deals with that.
+One more thing to notice: the skill asks the model to work out the next ADR number itself, by
+reading the directory. It usually gets it right, but that's judgement and tokens spent on
+arithmetic, and you can't test it on its own. Segment 2 moves it into a script.

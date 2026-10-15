@@ -55,14 +55,19 @@ Learners copy what they see, and Claude Code's plugin system changes quickly.
 claude plugin validate --strict stages/<stage>/adr
 ```
 
-Then run the stage's "Try it" steps end to end. To test headless without touching your own
-`~/.claude`, copy `sample-project` to a temporary folder outside the repo and run there:
+Then run the stage's "Try it" steps end to end. To test headless without changing your own skills
+or settings, copy `sample-project` to a temporary folder outside the repo and run there:
 
 ```sh
 claude -p "/adr:new-adr We've agreed to use Redis for session caching ..." \
   --plugin-dir <path-to>/stages/<stage>/adr \
-  --permission-mode acceptEdits --allowedTools "Read Write Glob Grep Bash(ls:*)" < /dev/null
+  --permission-mode acceptEdits --allowedTools "Read Write Edit Glob Grep Skill" < /dev/null
 ```
+
+From stage 2, `Skill` lets one skill call another and `Edit` lets `supersede-adr` change a status.
+The skills' own scripts run through their `allowed-tools`, so don't add `Bash` here: that would hide
+a broken `allowed-tools` rule. Pass `--settings stages/2-reliable/settings-example.json` to test
+configuration.
 
 Keep the prompt straight after `-p`: `--allowedTools` takes several values and swallows a prompt
 that follows it. Check that `docs/adr/0003-*.md` appears with the expected content.

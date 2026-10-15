@@ -1,0 +1,10 @@
+{
+  "pluginConfigs": {
+    "adr@inline": {
+      "options": {
+        "adr_dir": "docs/decisions",
+        "template": "madr"
+      }
+    }
+  }
+}

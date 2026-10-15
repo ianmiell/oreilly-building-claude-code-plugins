@@ -35,7 +35,7 @@ exercises/          # the hands-on exercises; each one's solution is a stage
 |---|---|---|
 | [0: a loose skill](stages/0-loose-skill/) | The `new-adr` skill on its own | Ready |
 | [1: a plugin](stages/1-plugin/) | The skill packaged as a plugin and loaded locally | Ready |
-| 2: reliable | Scripts, configuration and skills that call skills | Coming |
+| [2: reliable](stages/2-reliable/) | Scripts, configuration and skills that call skills | Ready |
 | 3: shipped | A team marketplace, versioning and managed settings | Coming |
 | 4: proven | Validation and an eval suite | Coming |
 
