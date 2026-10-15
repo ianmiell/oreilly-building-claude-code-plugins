@@ -10,7 +10,8 @@ The `adr` plugin from [stage 1](../1-plugin/), made dependable. Five changes:
   ADR to `new-adr` rather than doing it itself.
 - **Hooks.** At the start of every session Claude is told which decisions are already accepted, and
   every ADR Claude writes is checked, whether or not a skill wrote it.
-- **A reviewer subagent.** `adr-reviewer` reviews an ADR in its own context, with read-only tools.
+- **A reviewer subagent.** `adr-reviewer` reviews an ADR in its own context, with read-only tools,
+  on a cheaper model.
 
 ```
 adr/
@@ -18,7 +19,7 @@ adr/
   hooks/hooks.json                # new: SessionStart and PostToolUse hooks
   scripts/session-context.sh      # new: lists accepted decisions for Claude
   scripts/check-adr.sh            # new: checks each ADR Claude writes
-  agents/adr-reviewer.md          # new: read-only reviewer subagent
+  agents/adr-reviewer.md          # new: read-only reviewer subagent, runs on Haiku
   skills/
     new-adr/
       SKILL.md                    # runs the scripts instead of working things out
@@ -149,14 +150,27 @@ if the path has spaces in it.
 
 `agents/adr-reviewer.md` defines a subagent: a separate assistant with its own instructions and its
 own context window. Claude hands it an ADR, it reads it and the other ADRs, and it reports back a
-verdict and up to five findings. Its front matter limits it to read-only tools:
+verdict and up to five findings. Its front matter sets what it can do and what it runs on:
 
 ```yaml
 tools: Read, Glob, Grep
+model: haiku
 ```
 
-So it can't change the ADR it's reviewing, and its reading doesn't fill up your main conversation.
-In the plugin it's called `adr:adr-reviewer`.
+- **`tools`** limits it to reading, so it can't change the ADR it's reviewing. Its reading doesn't
+  fill up your main conversation either.
+- **`model: haiku`** runs it on a smaller, cheaper, faster model than your main conversation. A
+  review against a fixed checklist is a narrow job, which is where a smaller model does well. Use
+  an alias such as `haiku` rather than a full model ID, so the plugin keeps working as models are
+  released and retired.
+
+A cheaper model isn't free. It can miss what a larger model would catch, or reach a different
+verdict on the same ADR. Try the review with `model: inherit`, which uses your main conversation's
+model, and compare. Segment 4 shows how to measure the difference with evals rather than guess.
+
+Some things can override the `model` field: Claude can ask for a different model when it hands
+over the task, and an organisation can restrict which models are allowed. Run `/tasks` while the
+review is running to see which model it's on. In the plugin it's called `adr:adr-reviewer`.
 
 ## Try it
 
@@ -211,6 +225,7 @@ claude --plugin-dir ../stages/2-reliable/adr
    ```
 
    Expected: Claude hands the review to `adr:adr-reviewer` and reports its verdict and findings.
+   The review runs on Haiku whatever model your main conversation uses.
 
 5. **Change the configuration.** Reset again, then start Claude Code with the example settings and
    repeat step 1:
