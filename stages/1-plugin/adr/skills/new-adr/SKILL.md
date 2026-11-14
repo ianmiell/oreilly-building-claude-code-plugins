@@ -23,9 +23,14 @@ Write one new Architecture Decision Record for the decision the user describes.
 5. **Create a worktree.** Do the writing in a new git worktree, never in the current checkout.
    - Get the repository root with `git rev-parse --show-toplevel` and the project's path inside it
      with `git rev-parse --show-prefix`.
-   - Run `git worktree add -b adr/NNNN-short-title <repo-root>/../<repo-name>-adr-NNNN HEAD`,
-     where `<repo-name>` is the base name of the repository root. If the branch or directory
-     already exists, stop and tell the user instead of reusing or overwriting it.
+   - Put worktrees in `<repo-root>/.claude/worktrees/`. If
+     `git check-ignore -q <repo-root>/.claude/worktrees/adr-NNNN` fails, append the line
+     `/.claude/worktrees/` to the file `info/exclude` under
+     `git rev-parse --path-format=absolute --git-common-dir`, so the worktree doesn't show up as
+     untracked in the checkout. Don't edit `.gitignore`.
+   - Run `git worktree add -b adr/NNNN-short-title <repo-root>/.claude/worktrees/adr-NNNN HEAD`.
+     If the branch or directory already exists, stop and tell the user instead of reusing or
+     overwriting it.
    - In the worktree, the ADR directory is `<worktree>/<prefix>docs/adr/`. Check the number again
      there and create the directory if it does not exist.
    - If the current directory is not in a git repository, skip this step and write in place.

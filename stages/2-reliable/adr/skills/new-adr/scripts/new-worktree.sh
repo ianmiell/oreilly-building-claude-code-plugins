@@ -1,6 +1,7 @@
 #!/bin/sh
 # Make a git worktree and branch for a new ADR, and print the directory and
-# number to write it under, for example: /code/myrepo-adr-0003/docs/adr/0003
+# number to write it under, for example:
+# /code/myrepo/.claude/worktrees/adr-0003/docs/adr/0003
 # Usage: new-worktree.sh <adr-directory> <short-title-in-kebab-case>
 # Outside a git repository it makes no worktree and prints what next-adr.sh
 # prints, so the ADR is written in place.
@@ -21,7 +22,7 @@ root=$(git rev-parse --show-toplevel 2>/dev/null) || { echo "$next"; exit 0; }
 prefix=$(git rev-parse --show-prefix)  # the project's path inside the repository
 number=$(basename "$next")
 branch="adr/$number-$title"
-tree="$(dirname "$root")/$(basename "$root")-adr-$number"
+tree="$root/.claude/worktrees/adr-$number"
 
 if git show-ref --verify --quiet "refs/heads/$branch"; then
   echo "Branch $branch already exists. Not reusing it." >&2
@@ -30,6 +31,14 @@ fi
 if [ -e "$tree" ]; then
   echo "$tree already exists. Not reusing it." >&2
   exit 1
+fi
+
+# Keep the worktree out of the checkout's untracked files. info/exclude is
+# local to this clone, so nothing in the repository changes.
+if ! git check-ignore -q "$tree"; then
+  exclude="$(git rev-parse --path-format=absolute --git-common-dir)/info/exclude"
+  mkdir -p "$(dirname "$exclude")"
+  echo '/.claude/worktrees/' >> "$exclude"
 fi
 
 git worktree add -q -b "$branch" "$tree" HEAD >&2

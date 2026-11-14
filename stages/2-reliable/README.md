@@ -45,9 +45,10 @@ stages/2-reliable/adr/skills/new-adr/scripts/next-adr.sh sample-project/docs/adr
 ```
 
 `SKILL.md` tells Claude to run the script and use exactly what it prints. In fact Claude runs
-`new-worktree.sh`, which calls `next-adr.sh`, then makes a git worktree beside the repository on a
-new branch `adr/NNNN-<short-title>`, and prints the same directory and number inside that worktree.
-`commit-adr.sh` commits the finished ADR there. Your own checkout is never touched. Outside a git
+`new-worktree.sh`, which calls `next-adr.sh`, then makes a git worktree in `.claude/worktrees/` at
+the root of the checkout, on a new branch `adr/NNNN-<short-title>`, and prints the same directory
+and number inside that worktree. `commit-adr.sh` commits the finished ADR there. Your own working
+copy of the ADRs is never touched. Outside a git
 repository, `new-worktree.sh` prints what `next-adr.sh` prints and the ADR is written in place.
 
 Two details make this work wherever the plugin is installed:
@@ -201,7 +202,8 @@ claude --plugin-dir ../stages/2-reliable/adr
 
    Expected: `docs/adr/0003-use-redis-for-session-caching.md`, in the Nygard format, committed on
    branch `adr/0003-use-redis-for-session-caching` in a new worktree,
-   `../<repo>-adr-0003/sample-project/`. Claude runs the skill's scripts without asking permission.
+   `.claude/worktrees/adr-0003/sample-project/`. Claude runs the skill's scripts without asking
+   permission.
 
 2. **Supersede a decision.** Reset the sample project first (see below), start Claude Code again,
    and say:
@@ -255,7 +257,7 @@ Reset the sample project between steps, from the repo root:
 
 ```sh
 git restore sample-project && git clean -fdq sample-project
-git worktree list --porcelain | sed -n 's/^worktree \(.*-adr-[0-9]*\)$/\1/p' | while read -r w; do git worktree remove --force "$w"; done
+git worktree list --porcelain | sed -n 's|^worktree \(.*/\.claude/worktrees/adr-[0-9]*\)$|\1|p' | while read -r w; do git worktree remove --force "$w"; done
 git branch --list 'adr/*' --format='%(refname:short)' | while read -r b; do git branch -D "$b"; done
 ```
 

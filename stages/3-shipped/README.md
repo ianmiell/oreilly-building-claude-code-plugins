@@ -216,6 +216,6 @@ Then reset the sample project, from the repo root:
 
 ```sh
 git restore sample-project && git clean -fdq sample-project
-git worktree list --porcelain | sed -n 's/^worktree \(.*-adr-[0-9]*\)$/\1/p' | while read -r w; do git worktree remove --force "$w"; done
+git worktree list --porcelain | sed -n 's|^worktree \(.*/\.claude/worktrees/adr-[0-9]*\)$|\1|p' | while read -r w; do git worktree remove --force "$w"; done
 git branch --list 'adr/*' --format='%(refname:short)' | while read -r b; do git branch -D "$b"; done
 ```

@@ -53,7 +53,7 @@ A plain-language request ("We've decided to use Redis for session caching, can y
 down?") works too: the skill's description still tells Claude when to use it.
 
 **Expected result:** the same as stage 0, a new `docs/adr/0003-<short-title>.md`, committed on
-branch `adr/0003-<short-title>` in a new worktree beside this repo.
+branch `adr/0003-<short-title>` in a new worktree in `.claude/worktrees/adr-0003`.
 
 `--plugin-dir` loads the plugin for this session only. Nothing is installed, so there's nothing to
 remove afterwards. Put the sample project back, and remove the ADR worktrees and branches, with:
@@ -61,7 +61,7 @@ remove afterwards. Put the sample project back, and remove the ADR worktrees and
 ```sh
 cd ..
 git restore sample-project && git clean -fdq sample-project
-git worktree list --porcelain | sed -n 's/^worktree \(.*-adr-[0-9]*\)$/\1/p' | while read -r w; do git worktree remove --force "$w"; done
+git worktree list --porcelain | sed -n 's|^worktree \(.*/\.claude/worktrees/adr-[0-9]*\)$|\1|p' | while read -r w; do git worktree remove --force "$w"; done
 git branch --list 'adr/*' --format='%(refname:short)' | while read -r b; do git branch -D "$b"; done
 ```
 

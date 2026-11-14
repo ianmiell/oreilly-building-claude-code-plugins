@@ -44,7 +44,7 @@ Here's the checklist applied to [stage 3's `adr`](adr/):
 | Component | Runs when | Reads | Writes | Network |
 |---|---|---|---|---|
 | `new-adr` scripts `next-adr.sh`, `template.sh` | When Claude runs them; `allowed-tools` names exactly these and the two below | ADR directory, templates, `template.md` in its data directory | Nothing | None |
-| `new-adr` scripts `new-worktree.sh`, `commit-adr.sh` | When Claude runs them, through `allowed-tools` | The git repository | A new git worktree beside the repository, a new `adr/` branch, and a commit on that branch. Never pushes | None |
+| `new-adr` scripts `new-worktree.sh`, `commit-adr.sh` | When Claude runs them, through `allowed-tools` | The git repository | A new git worktree in `.claude/worktrees/`, a new `adr/` branch, a `/.claude/worktrees/` line in the clone's local `.git/info/exclude` if it isn't already ignored, and a commit on that branch. Never pushes | None |
 | SessionStart hook `session-context.sh` | Every session start | ADR directory | Nothing; prints a summary to Claude | None |
 | PostToolUse hook `check-adr.sh` | After every `Write` or `Edit` | The hook input and the ADR directory | Nothing | None |
 | MCP server `adr_search.py` | For the whole session | ADR directory | Nothing | None; Python standard library only |

@@ -29,14 +29,15 @@ commands: `allowed-tools` lets only the scripts themselves run without a permiss
    ${CLAUDE_SKILL_DIR}/scripts/new-worktree.sh '${user_config.adr_dir}' 'SHORT-TITLE'
    ```
 
-   It makes a new git worktree beside the repository, on a new branch `adr/NNNN-SHORT-TITLE`, and
-   prints the directory and the new number inside it, for example
-   `/code/myrepo-adr-0003/docs/adr/0003`. Use exactly what it prints. Do not work the number out
-   yourself, and do not write the ADR in the current checkout. Outside a git repository it makes
+   It makes a new git worktree in `.claude/worktrees/` at the root of the checkout, on a new branch
+   `adr/NNNN-SHORT-TITLE`, and prints the directory and the new number inside it, for example
+   `/code/myrepo/.claude/worktrees/adr-0003/docs/adr/0003`. Use exactly what it prints. Do not
+   work the number out yourself, and do not write the ADR in the checkout's own ADR directory.
+   Outside a git repository it makes
    no worktree and prints a path in the current project instead, for example `docs/adr/0003`. If
    it fails because the branch or directory already exists, stop and tell the user.
 4. **Name the file.** Add `-SHORT-TITLE.md` to what the script printed, for example
-   `/code/myrepo-adr-0003/docs/adr/0003-use-redis-for-session-caching.md`.
+   `/code/myrepo/.claude/worktrees/adr-0003/docs/adr/0003-use-redis-for-session-caching.md`.
 5. **Get the template.** Run:
 
    ```sh
