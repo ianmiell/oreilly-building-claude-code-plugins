@@ -5,15 +5,20 @@
 set -eu
 
 dir="${CLAUDE_PLUGIN_OPTION_ADR_DIR:-docs/adr}"
+dir="${dir%/}"
 adr_dir="${CLAUDE_PROJECT_DIR:-$PWD}/$dir"
 
 # The hook's input is JSON on stdin. Take the first "file_path" value, which is
 # the file the tool wrote. It's always an absolute path.
 file=$(grep -o '"file_path" *: *"[^"]*"' | head -n 1 | sed 's/.*"\([^"]*\)"$/\1/') || true
 name=$(basename "${file:-none}")
+file_dir=$(dirname "${file:-none}")
 
-# Only look at NNNN-*.md files directly inside the ADR directory.
-[ "$(dirname "${file:-none}")" = "$adr_dir" ] || exit 0
+# Only look at NNNN-*.md files directly inside an ADR directory: the project's,
+# or the same directory in a worktree that new-adr made, which is outside the
+# project directory.
+case "$file_dir" in "$adr_dir" | */"$dir") ;; *) exit 0 ;; esac
+adr_dir=$file_dir
 case "$name" in [0-9][0-9][0-9][0-9]-*.md) ;; *) exit 0 ;; esac
 [ -f "$file" ] || exit 0
 

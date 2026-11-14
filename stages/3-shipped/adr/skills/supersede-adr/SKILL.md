@@ -19,10 +19,17 @@ Record a new decision that replaces an earlier one, and link the two records.
    the new decision, its context, alternatives and consequences, and the fact that it supersedes
    the old ADR. Do not write the new ADR yourself: `new-adr` owns the numbering, file naming and
    template, so every ADR comes out the same way.
-4. **Link the two records** once `new-adr` has written the file:
+4. **Link the two records** once `new-adr` has written the file. `new-adr` writes it in a new git
+   worktree, so make both edits in that worktree's ADR directory, the directory holding the new
+   ADR, and leave the current checkout untouched:
    - In the old ADR, change only the status, to `Superseded by [ADR MMMM](<new file name>)`.
      In an ADR with a `status:` field in its front matter, set it to `superseded by ADR-MMMM`
      instead. Change nothing else in the old ADR.
    - In the new ADR, add `Supersedes [ADR NNNN](<old file name>)` on its own line just after the
      status.
-5. **Report back** with both file paths and a one-line summary of what changed.
+5. **Commit both files** on the worktree's branch, with
+   `git -C <worktree ADR directory> commit -m 'Mark ADR NNNN superseded by ADR MMMM' -- <old file> <new file>`.
+   Do not push, merge, or remove the worktree. If `new-adr` wrote in place because the project is
+   not in a git repository, skip this step.
+6. **Report back** with both file paths, the worktree path, the branch name, and a one-line summary
+   of what changed.

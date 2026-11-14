@@ -130,7 +130,9 @@ graders:
 ### What each part does
 
 - **`scaffold_script`** builds the starting state. Every run starts in an empty folder, so
-  `scaffold.sh` writes ADRs 0001 and 0002 into `docs/adr/`, and the right next number is 0003. The
+  `scaffold.sh` writes ADRs 0001 and 0002 into `docs/adr/`, and the right next number is 0003. That
+  folder isn't a git repository, so `new-adr` makes no worktree and writes in place, where the
+  graders look. The
   script must sit inside the case folder: a path with `..` is refused. It only runs when you pass
   `--scaffold`, because it is a shell script running as you.
 - **`allowed_tools`** is what the case needs. `Write`, `Edit` and `Bash` are also gated by you on the

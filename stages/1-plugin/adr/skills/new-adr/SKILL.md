@@ -20,9 +20,21 @@ Write one new Architecture Decision Record for the decision the user describes.
    use `0001`.
 4. **Name the file.** `NNNN-short-title-in-kebab-case.md`, for example
    `0003-use-redis-for-session-caching.md`.
-5. **Write the file** using the template below. Set the status to `Accepted` if the user says the
-   decision is agreed, otherwise `Proposed`. Use today's date.
-6. **Report back** with the file path and a one-line summary of the decision.
+5. **Create a worktree.** Do the writing in a new git worktree, never in the current checkout.
+   - Get the repository root with `git rev-parse --show-toplevel` and the project's path inside it
+     with `git rev-parse --show-prefix`.
+   - Run `git worktree add -b adr/NNNN-short-title <repo-root>/../<repo-name>-adr-NNNN HEAD`,
+     where `<repo-name>` is the base name of the repository root. If the branch or directory
+     already exists, stop and tell the user instead of reusing or overwriting it.
+   - In the worktree, the ADR directory is `<worktree>/<prefix>docs/adr/`. Check the number again
+     there and create the directory if it does not exist.
+   - If the current directory is not in a git repository, skip this step and write in place.
+6. **Write the file** in the worktree using the template below. Set the status to `Accepted` if
+   the user says the decision is agreed, otherwise `Proposed`. Use today's date.
+7. **Commit it on the branch** in the worktree (`git -C <worktree> add` the file, then
+   `git -C <worktree> commit`). Do not push, merge, or remove the worktree.
+8. **Report back** with the file path, the worktree path, the branch name, and a one-line
+   summary of the decision.
 
 Never edit existing ADRs. An ADR is a record of what was decided at the time.
 

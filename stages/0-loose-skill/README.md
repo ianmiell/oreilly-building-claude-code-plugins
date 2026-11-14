@@ -30,13 +30,18 @@ when to use it.
 
 **Expected result:** a new file `docs/adr/0003-<short-title>.md`, numbered after the two ADRs already
 there, with today's date, status `Accepted`, and sticky sessions listed under "Alternatives
-considered".
+considered". The skill writes it in a new git worktree beside this repo,
+`../<repo>-adr-0003/sample-project/docs/adr/`, and commits it on a new branch,
+`adr/0003-<short-title>`. Your own checkout of `sample-project` is left unchanged.
 
-When you're done, put the sample project back and remove the skill:
+When you're done, put the sample project back, remove the ADR worktrees and branches, and remove
+the skill:
 
 ```sh
 cd ..
 git restore sample-project && git clean -fdq sample-project
+git worktree list --porcelain | sed -n 's/^worktree \(.*-adr-[0-9]*\)$/\1/p' | while read -r w; do git worktree remove --force "$w"; done
+git branch --list 'adr/*' --format='%(refname:short)' | while read -r b; do git branch -D "$b"; done
 rm -rf ~/.claude/skills/new-adr
 ```
 

@@ -25,6 +25,8 @@ adr/
       SKILL.md                    # runs the scripts instead of working things out
       scripts/next-adr.sh         # prints the directory and next number, e.g. docs/adr/0003
       scripts/template.sh         # prints the template to fill in
+      scripts/new-worktree.sh     # makes a worktree and branch for the ADR, prints where to write it
+      scripts/commit-adr.sh       # commits the ADR on that branch
       templates/nygard.md
       templates/madr.md
     supersede-adr/
@@ -42,19 +44,29 @@ stages/2-reliable/adr/skills/new-adr/scripts/next-adr.sh sample-project/docs/adr
 # sample-project/docs/adr/0003
 ```
 
-`SKILL.md` tells Claude to run the script and use exactly what it prints. Two details make this
-work wherever the plugin is installed:
+`SKILL.md` tells Claude to run the script and use exactly what it prints. In fact Claude runs
+`new-worktree.sh`, which calls `next-adr.sh`, then makes a git worktree beside the repository on a
+new branch `adr/NNNN-<short-title>`, and prints the same directory and number inside that worktree.
+`commit-adr.sh` commits the finished ADR there. Your own checkout is never touched. Outside a git
+repository, `new-worktree.sh` prints what `next-adr.sh` prints and the ADR is written in place.
+
+Two details make this work wherever the plugin is installed:
 
 - **`${CLAUDE_SKILL_DIR}`** is replaced with the skill's own directory when the skill loads, so the
   skill can find its scripts without knowing where the plugin lives.
-- **`allowed-tools`** in the skill's front matter lets Claude run those two scripts, and nothing
+- **`allowed-tools`** in the skill's front matter lets Claude run the skill's scripts, and nothing
   else, without asking permission each time:
 
   ```yaml
   allowed-tools:
     - Bash(${CLAUDE_SKILL_DIR}/scripts/next-adr.sh *)
     - Bash(${CLAUDE_SKILL_DIR}/scripts/template.sh *)
+    - Bash(${CLAUDE_SKILL_DIR}/scripts/new-worktree.sh *)
+    - Bash(${CLAUDE_SKILL_DIR}/scripts/commit-adr.sh *)
   ```
+
+  The git commands live inside the scripts, so Claude can make a worktree and commit to it without
+  being allowed to run `git` in general.
 
 A good rule: if a step has one right answer, put it in a script. Leave the model the parts that
 need judgement, such as summarising the context and naming the decision.
@@ -187,8 +199,9 @@ claude --plugin-dir ../stages/2-reliable/adr
    /adr:new-adr We've agreed to use Redis for session caching instead of in-process memory, because we're moving to several app instances behind a load balancer. We looked at sticky sessions but they make deploys painful.
    ```
 
-   Expected: `docs/adr/0003-use-redis-for-session-caching.md`, in the Nygard format. Claude runs
-   `next-adr.sh` and `template.sh` without asking permission.
+   Expected: `docs/adr/0003-use-redis-for-session-caching.md`, in the Nygard format, committed on
+   branch `adr/0003-use-redis-for-session-caching` in a new worktree,
+   `../<repo>-adr-0003/sample-project/`. Claude runs the skill's scripts without asking permission.
 
 2. **Supersede a decision.** Reset the sample project first (see below), start Claude Code again,
    and say:
@@ -200,7 +213,8 @@ claude --plugin-dir ../stages/2-reliable/adr
    Expected: Claude uses `supersede-adr`, which calls `new-adr`. You get
    `docs/adr/0003-use-cockroachdb-for-order-data.md` with `Supersedes [ADR 0002](...)` under its
    status, and in `0002-use-postgresql-for-order-data.md` only the status has changed, to
-   `Superseded by [ADR 0003](...)`.
+   `Superseded by [ADR 0003](...)`. Both changes are in the new worktree, on its branch; your own
+   checkout still has ADR 0002 unchanged.
 
 3. **See what the hooks do.** Reset, start Claude Code with the plugin, and ask:
 
@@ -234,13 +248,15 @@ claude --plugin-dir ../stages/2-reliable/adr
    claude --plugin-dir ../stages/2-reliable/adr --settings ../stages/2-reliable/settings-example.json
    ```
 
-   Expected: `docs/decisions/0001-use-redis-for-session-caching.md`, in MADR format with `status`
-   and `date` in front matter.
+   Expected: `docs/decisions/0001-use-redis-for-session-caching.md` in a new worktree, in MADR
+   format with `status` and `date` in front matter.
 
 Reset the sample project between steps, from the repo root:
 
 ```sh
 git restore sample-project && git clean -fdq sample-project
+git worktree list --porcelain | sed -n 's/^worktree \(.*-adr-[0-9]*\)$/\1/p' | while read -r w; do git worktree remove --force "$w"; done
+git branch --list 'adr/*' --format='%(refname:short)' | while read -r b; do git branch -D "$b"; done
 ```
 
 Claude Code creates the plugin's data directory, `~/.claude/plugins/data/adr-inline/`, the first
